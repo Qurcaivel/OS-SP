@@ -12,7 +12,6 @@
 #include <string.h>
 #include <dirent.h>
 #include <linux/limits.h>
-#include <sys/stat.h>
 #include <sys/dir.h>
 
 // message to print at 'command -h'
@@ -78,12 +77,11 @@ void parse(int argc, char** argv){
     }
 }
 
-// check st_mode matches command args
-int match(unsigned int st_mode)
+int match(unsigned int d_type)
 {
-    return (command.l && S_ISLNK(st_mode)) ||
-           (command.d && S_ISDIR(st_mode)) ||
-           (command.f && S_ISREG(st_mode));
+    return (command.l && d_type == DT_LNK) ||
+           (command.d && d_type == DT_DIR) ||
+           (command.f && d_type == DT_REG);
 }
 
 // get directory entries
@@ -97,7 +95,7 @@ void traversal(const char* path)
 {
     DIR* dp;
     struct dirent** entries;
-    struct stat fs;
+    // struct stat fs;
     char subpath[PATH_MAX];
 
     if((dp = opendir(path)) == NULL)
@@ -119,20 +117,16 @@ void traversal(const char* path)
 
         sprintf(subpath, "%s/%s", path, entry->d_name);
 
-        if(stat(subpath, &fs) == -1)
+        if(match(entry->d_type))
         {
-            fprintf(stderr, "Unable to specify entry '%s'\n", subpath);
-            continue;
-        }
-
-        if(match(fs.st_mode)){
             printf("%s\n", subpath);
         }
 
-        if(S_ISDIR(fs.st_mode))
+        if(entry->d_type == DT_DIR)
         {
             traversal(subpath);
         }
+
     }
 
     closedir(dp);
@@ -146,6 +140,6 @@ int main(int argc, char** argv)
     {
         command.l = command.d = command.f = 1;
     }
-
+    
     traversal(command.dir);
 }
