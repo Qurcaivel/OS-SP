@@ -50,22 +50,22 @@ void parse(int argc, char** argv){
     while((rez = getopt(argc, argv, "ldfsh")) != -1){
         switch(rez)
         {
-        case 'l': command.l = 1; break;
-        case 'd': command.d = 1; break;
-        case 'f': command.f = 1; break;
-        case 's': command.s = 1; break;
+            case 'l': command.l = 1; break;
+            case 'd': command.d = 1; break;
+            case 'f': command.f = 1; break;
+            case 's': command.s = 1; break;
 
-        case 'h':
-            printf(HELP_MESSAGE);
-            exit(0);
+            case 'h':
+                printf(HELP_MESSAGE);
+                exit(0);
 
-        case '?':
-            fprintf(stderr, "Unknown option -%c\n", optopt);
-            exit(1);
-        
-        default:
-            perror("Not valid command-line arguments");
-            exit(1);
+            case '?':
+                fprintf(stderr, "Unknown option -%c\n", optopt);
+                exit(1);
+            
+            default:
+                perror("Not valid command-line arguments");
+                exit(1);
         }
     }
 

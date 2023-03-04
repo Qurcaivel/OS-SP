@@ -1,1 +1,7 @@
+# ignore vscode environment
 .vscode
+
+# ingore binaries
+L1/dirwalk
+L2/parent
+L2/son
